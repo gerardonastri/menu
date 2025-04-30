@@ -74,22 +74,114 @@ export default function Menu() {
   const menuData = {
     giorno: {
       cocktail: [
-        { name: "Aperol spritz", description: "Aperol, prosecco, soda", price: 7 },
-        { name: "Campari spritz", description: "Campari, prosecco, soda", price: 7 },
+        {
+          name: "Aperol spritz",
+          description: "Aperol, prosecco, soda",
+          price: 7,
+          gradazione: "11°",
+          colore: "Arancione",
+          aroma: "Agrumato, amaro",
+        },
+        {
+          name: "Campari spritz",
+          description: "Campari, prosecco, soda",
+          price: 7,
+          gradazione: "11°",
+          colore: "Rosso",
+          aroma: "Amaro, erbe",
+        },
         { name: "Hugò spritz", description: "Sciroppo di sambuco, prosecco, menta, lime", price: 7 },
         { name: "Limoncello spritz", description: "Limoncello, prosecco, soda", price: 7 },
         { name: "Bellini", description: "Prosecco, purea di pesca", price: 7 },
       ],
       "vino-e-spumanti": [
-        { name: "Ravello", description: "E. Sammarco", price: 25 },
-        { name: "B -------- R --------- Rosato", description: "", price: 22 },
-        { name: "PROSECCO", description: "", price: 20 },
+        {
+          name: "Ravello",
+          description: "E. Sammarco",
+          price: 25,
+          provenienza: "Campania",
+          tipologia: "Bianco DOC",
+          gradazione: "13°",
+          colore: "Giallo paglierino",
+          aroma: "Fruttato, note floreali",
+        },
+        {
+          name: "B -------- R --------- Rosato",
+          description: "",
+          price: 22,
+          provenienza: "Puglia",
+          tipologia: "Rosato IGT",
+          gradazione: "12.5°",
+          colore: "Rosa tenue",
+          aroma: "Frutti rossi, fresco",
+        },
+        {
+          name: "PROSECCO",
+          description: "",
+          price: 20,
+          provenienza: "Veneto",
+          tipologia: "Spumante DOC",
+          gradazione: "11°",
+          colore: "Giallo paglierino",
+          aroma: "Fresco, note di mela",
+        },
       ],
       birre: [
-        { name: "Peroni", description: "", price: 4 },
-        { name: "Nastro Azzurro", description: "", price: 4 },
-        { name: "Nastro Azzurro Capri", description: "", price: 5 },
-        { name: "Nastro Azzurro 0", description: "Analcolica", price: 4 },
+        {
+          name: "Peroni",
+          description: "",
+          price: 4,
+          provenienza: "Italia",
+          tipologia: "Lager",
+          gradazione: "4.7°",
+          colore: "Chiara",
+          aroma: "Leggero, maltato",
+          metodo: "Bassa fermentazione",
+        },
+        {
+          name: "Nastro Azzurro",
+          description: "",
+          price: 4,
+          provenienza: "Italia",
+          tipologia: "Lager Premium",
+          gradazione: "5.1°",
+          colore: "Chiara",
+          aroma: "Fresco, cereali",
+          metodo: "Bassa fermentazione",
+        },
+        {
+          name: "Nastro Azzurro Capri",
+          description: "",
+          price: 5,
+          provenienza: "Italia",
+          tipologia: "Lager Speciale",
+          gradazione: "5.0°",
+          colore: "Chiara",
+          aroma: "Note di limone",
+          metodo: "Bassa fermentazione",
+        },
+        {
+          name: "Nastro Azzurro 0",
+          description: "Analcolica",
+          price: 4,
+          provenienza: "Italia",
+          tipologia: "Lager Analcolica",
+          gradazione: "0.0°",
+          colore: "Chiara",
+          aroma: "Leggero, maltato",
+          metodo: "Bassa fermentazione",
+        },
+        {
+          name: "Corsendonk Rousse",
+          description: "",
+          price: 5,
+          provenienza: "Belgio",
+          tipologia: "Abbazia",
+          gradazione: "8°",
+          colore: "Ambrata",
+          aroma: "Dolce e speziato",
+          metodo: "Alta fermentazione",
+        },
       ],
       bibite: [
         { name: "Coca-cola", description: "", price: 3 },
@@ -159,9 +251,22 @@ export default function Menu() {
         { name: "Gin lemon", description: "", price: 9 },
       ],
       "vino-e-spumanti": [
-        { name: "Ravello", description: "E. Sammarco", price: 25 },
-        { name: "B -------- R --------- Rosato", description: "", price: 22 },
-        { name: "PROSECCO", description: "", price: 20 },
+        { name: "Ravello", description: "E. Sammarco", price: 25, provenienza: "Campania", tipologia: "Rosso" },
+        {
+          name: "B -------- R --------- Rosato",
+          description: "",
+          price: 22,
+          provenienza: "Campania",
+          tipologia: "Rosato",
+        },
+        {
+          name: "PROSECCO",
+          description: "",
+          price: 20,
+          provenienza: "Veneto",
+          tipologia: "Spumante",
+          gradazione: "11%",
+        },
       ],
       food: [
         {
@@ -427,13 +532,48 @@ export default function Menu() {
               <div className="grid gap-4">
                 {filteredItems.map((item, index) => (
                   <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h4 className="text-lg font-semibold">{item.name}</h4>
-                        {item.subcategory && <p className="text-sm text-amber-600 font-medium">{item.subcategory}</p>}
-                        {item.description && <p className="text-sm text-neutral-600 mt-1">{item.description}</p>}
+                    <div>
+                      <h4 className="text-lg font-semibold">{item.name}</h4>
+                      {item.subcategory && <p className="text-sm text-amber-600 font-medium">{item.subcategory}</p>}
+                      <div className="mt-2 space-y-1 text-sm">
+                        {item.provenienza && (
+                          <p className="text-neutral-600">
+                            <span className="font-medium">Provenienza:</span> {item.provenienza}
+                          </p>
+                        )}
+                        {item.tipologia && (
+                          <p className="text-neutral-600">
+                            <span className="font-medium">Tipologia:</span> {item.tipologia}
+                          </p>
+                        )}
+                        {item.gradazione && (
+                          <p className="text-neutral-600">
+                            <span className="font-medium">Gradazione:</span> {item.gradazione}
+                          </p>
+                        )}
+                        {item.colore && (
+                          <p className="text-neutral-600">
+                            <span className="font-medium">Colore:</span> {item.colore}
+                          </p>
+                        )}
+                        {item.aroma && (
+                          <p className="text-neutral-600">
+                            <span className="font-medium">Aroma:</span> {item.aroma}
+                          </p>
+                        )}
+                        {item.metodo && (
+                          <p className="text-neutral-600">
+                            <span className="font-medium">Metodo di produzione:</span> {item.metodo}
+                          </p>
+                        )}
+                        {item.description && <p className="text-neutral-600">{item.description}</p>}
                       </div>
-                      <div className={`text-lg font-bold ${menuType === 'giorno' ? "text-amber-600" : "text-indigo-700"}`}>
+                      {item.description && item.description.length > 50 && (
+                        <button className="text-blue-500 text-sm mt-2 hover:underline">
+                          {language === "it" ? "Leggi di più" : "Read more"}
+                        </button>
+                      )}
+                      <div className={`mt-3 text-lg font-bold ${menuType === "giorno" ? "text-amber-600" : "text-indigo-700"}`}>
                         {item.price ? `${item.price.toFixed(2)} €` : ""}
                       </div>
                     </div>
@@ -465,14 +605,17 @@ export default function Menu() {
                               key={itemIndex}
                               className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100"
                             >
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                  <h5 className="text-lg font-semibold">{item.name}</h5>
-                                  {item.description && (
-                                    <p className="text-sm text-neutral-600 mt-1">{item.description}</p>
-                                  )}
+                              <div>
+                                <h5 className="text-lg font-semibold">{item.name}</h5>
+                                <div className="mt-2 space-y-1 text-sm">
+                                  {item.description && <p className="text-neutral-600">{item.description}</p>}
                                 </div>
-                                <div className={`text-lg font-bold ${menuType === 'giorno' ? "text-amber-600" : "text-indigo-700"}`}>
+                                {item.description && item.description.length > 50 && (
+                                  <button className="text-blue-500 text-sm mt-2 hover:underline">
+                                    {language === "it" ? "Leggi di più" : "Read more"}
+                                  </button>
+                                )}
+                                <div className={`mt-3 text-lg font-bold ${menuType === "giorno" ? "text-amber-600" : "text-indigo-700"}`}>
                                   {item.price ? `${item.price.toFixed(2)} €` : ""}
                                 </div>
                               </div>
@@ -486,12 +629,47 @@ export default function Menu() {
                   <div className="grid gap-4">
                     {menuData[menuType][category.id].map((item, index) => (
                       <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <h4 className="text-lg font-semibold">{item.name}</h4>
-                            {item.description && <p className="text-sm text-neutral-600 mt-1">{item.description}</p>}
+                        <div>
+                          <h4 className="text-lg font-semibold">{item.name}</h4>
+                          <div className="mt-2 space-y-1 text-sm">
+                            {item.provenienza && (
+                              <p className="text-neutral-600">
+                                <span className="font-medium">Provenienza:</span> {item.provenienza}
+                              </p>
+                            )}
+                            {item.tipologia && (
+                              <p className="text-neutral-600">
+                                <span className="font-medium">Tipologia:</span> {item.tipologia}
+                              </p>
+                            )}
+                            {item.gradazione && (
+                              <p className="text-neutral-600">
+                                <span className="font-medium">Gradazione:</span> {item.gradazione}
+                              </p>
+                            )}
+                            {item.colore && (
+                              <p className="text-neutral-600">
+                                <span className="font-medium">Colore:</span> {item.colore}
+                              </p>
+                            )}
+                            {item.aroma && (
+                              <p className="text-neutral-600">
+                                <span className="font-medium">Aroma:</span> {item.aroma}
+                              </p>
+                            )}
+                            {item.metodo && (
+                              <p className="text-neutral-600">
+                                <span className="font-medium">Metodo di produzione:</span> {item.metodo}
+                              </p>
+                            )}
+                            {item.description && <p className="text-neutral-600">{item.description}</p>}
                           </div>
-                          <div className={`text-lg font-bold ${menuType === 'giorno' ? "text-amber-600" : "text-indigo-700"}`}>
+                          {item.description && item.description.length > 50 && (
+                            <button className="text-blue-500 text-sm mt-2 hover:underline">
+                              {language === "it" ? "Leggi di più" : "Read more"}
+                            </button>
+                          )}
+                          <div className={`mt-3 text-lg font-bold ${menuType === "giorno" ? "text-amber-600" : "text-indigo-700"}`}>
                             {item.price ? `${item.price.toFixed(2)} €` : ""}
                           </div>
                         </div>
@@ -555,7 +733,7 @@ export default function Menu() {
               <h3 className="text-xl font-bold mb-4">{t.location}</h3>
               <div className="aspect-video relative rounded-lg overflow-hidden">
                 <Image
-                  src="/place/night.web"
+                  src="/place/night.webp"
                   alt="Piscina le Terrazze - Vista notturna"
                   fill
                   className="object-cover"
