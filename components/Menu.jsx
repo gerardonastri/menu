@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Sun, Moon, Search, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import Link from "next/link"
 
 export default function Menu() {
   const [menuType, setMenuType] = useState("giorno") // "giorno" o "sera"
@@ -646,7 +647,7 @@ export default function Menu() {
             className="mt-8 pt-8 border-t border-neutral-800 text-center text-neutral-400"
           >
             <p>
-              © {new Date().getFullYear()} Piscina le Terrazze. {t.diritti}
+              © {new Date().getFullYear()} Piscina le Terrazze. <Link className="underline" href="/policy">Privacy Policy</Link>
             </p>
           </motion.div>
         </div>

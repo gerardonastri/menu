@@ -28,7 +28,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "https://tuosito.it/og-image.jpg", // Sostituisci con il link corretto
+        url: "/place/day.webp", // Sostituisci con il link corretto
         width: 1200,
         height: 630,
         alt: "Piscina Le Terrazze - Menù Digitale",
@@ -40,7 +40,7 @@ export const metadata = {
     title: "Menù Digitale | Piscina Le Terrazze - Ravello",
     description:
       "Accedi al menù digitale di Piscina Le Terrazze in un click. Anche offline.",
-    images: ["https://tuosito.it/og-image.jpg"], // Sostituisci anche qui
+    images: ["/place/day.webp"], // Sostituisci anche qui
     creator: "@tuotwitter",
   },
 };

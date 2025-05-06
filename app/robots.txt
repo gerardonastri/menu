@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Disallow eventuali percorsi admin o privati
+Disallow: /admin
+
+# Sitemap
+Sitemap: https://piscina-le-terrazze.vercel.app/sitemap.xml
