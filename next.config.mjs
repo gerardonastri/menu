@@ -9,10 +9,10 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    optimizeCss: true,
-    turbo: true
-  }
+  // experimental: {
+  //   optimizeCss: false,
+  //   turbo: true
+  // }
 };
 
 export default nextConfig;
