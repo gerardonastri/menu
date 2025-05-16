@@ -5,10 +5,12 @@ import { createContext, useState, useContext, useEffect } from "react"
 const CartContext = createContext()
 
 export function CartProvider({ children }) {
+  // Modifica la inicialización del estado cartItems para asegurar que siempre sea un array
   const [cartItems, setCartItems] = useState([])
   const [tableNumber, setTableNumber] = useState("")
   const [isCartOpen, setIsCartOpen] = useState(false)
 
+  // Modifica la función useEffect que carga datos del localStorage
   useEffect(() => {
     const storedCart = localStorage.getItem("cart")
     const storedTable = localStorage.getItem("tableNumber")
@@ -16,6 +18,7 @@ export function CartProvider({ children }) {
     if (storedCart) {
       try {
         const parsedCart = JSON.parse(storedCart)
+        // Verifica que parsedCart sea un array
         setCartItems(Array.isArray(parsedCart) ? parsedCart : [])
       } catch (error) {
         console.error("Error en el parsing del carrello:", error)
@@ -42,8 +45,14 @@ export function CartProvider({ children }) {
 
   // Aggiungi un elemento al carrello
   const addToCart = (item) => {
+    // Verifica que el item tenga un ID válido
+    if (!item || !item._id) {
+      console.error("Tentativo di aggiungere un item senza ID al carrello", item)
+      return
+    }
+
     setCartItems((prevItems) => {
-      // Controlla se l'elemento è già nel carrello
+      // Controlla se l'elemento è già nel carrello usando el ID único
       const existingItemIndex = prevItems.findIndex((cartItem) => cartItem._id === item._id)
 
       if (existingItemIndex >= 0) {

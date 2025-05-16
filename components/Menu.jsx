@@ -114,10 +114,10 @@ export default function Menu() {
             organizedData[item.time][item.category] = []
           }
 
-          // Aggiungi gli elementi con ID
-          organizedData[item.time][item.category] = item.items.map((menuItem) => ({
+          // Modifica aquí: crea un ID único para cada producto
+          organizedData[item.time][item.category] = item.items.map((menuItem, index) => ({
             ...menuItem,
-            _id: item._id, // Usa l'ID del documento principale
+            _id: `${item._id}_${index}`, // ID único combinando el ID de la categoría y el índice
           }))
         })
 
