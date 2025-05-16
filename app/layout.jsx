@@ -1,5 +1,6 @@
 import { AuthProvider } from "@/components/auth/AuthContext";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
 
 export const metadata = {
   title: "Menù Digitale | Piscina Le Terrazze - Ravello",
@@ -49,7 +50,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="it">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

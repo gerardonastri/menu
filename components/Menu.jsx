@@ -5,6 +5,8 @@ import Image from "next/image"
 import { Sun, Moon, Search, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
+import AddToCartButton from "@/components/AddToCartButton"
+import CartIcon from "@/components/CartIcon"
 
 export default function Menu() {
   const [menuType, setMenuType] = useState("giorno") // "giorno" o "sera"
@@ -35,6 +37,9 @@ export default function Menu() {
       cambiaLingua: "English",
       caricamento: "Caricamento menu...",
       errore: "Si è verificato un errore nel caricamento del menu",
+      aggiungiAlCarrello: "Aggiungi al carrello",
+      carrelloVuoto: "Il tuo carrello è vuoto",
+      vaiAlCarrello: "Vai al carrello",
     },
     en: {
       menuGiorno: "Day Menu",
@@ -53,6 +58,9 @@ export default function Menu() {
       cambiaLingua: "Italiano",
       caricamento: "Loading menu...",
       errore: "An error occurred while loading the menu",
+      aggiungiAlCarrello: "Add to cart",
+      carrelloVuoto: "Your cart is empty",
+      vaiAlCarrello: "Go to cart",
     },
   }
 
@@ -106,7 +114,11 @@ export default function Menu() {
             organizedData[item.time][item.category] = []
           }
 
-          organizedData[item.time][item.category] = item.items
+          // Aggiungi gli elementi con ID
+          organizedData[item.time][item.category] = item.items.map((menuItem) => ({
+            ...menuItem,
+            _id: item._id, // Usa l'ID del documento principale
+          }))
         })
 
         setMenuData(organizedData)
@@ -276,6 +288,9 @@ export default function Menu() {
             <div className="flex-shrink-0 font-bold text-xl">Le Terrazze</div>
 
             <div className="flex items-center space-x-2 md:space-x-4">
+              {/* Icona del carrello */}
+              <CartIcon />
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -429,12 +444,15 @@ export default function Menu() {
                           {language === "it" ? "Leggi di più" : "Read more"}
                         </button>
                       )}
-                      <div
-                        className={`mt-3 text-lg font-bold ${
-                          menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
-                        }`}
-                      >
-                        {item.price ? `${item.price.toFixed(2)} €` : ""}
+                      <div className="flex justify-between items-center">
+                        <div
+                          className={`mt-3 text-lg font-bold ${
+                            menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
+                          }`}
+                        >
+                          {item.price ? `${item.price.toFixed(2)} €` : ""}
+                        </div>
+                        <AddToCartButton item={item} />
                       </div>
                     </div>
                   </motion.div>
@@ -490,12 +508,15 @@ export default function Menu() {
                                         {language === "it" ? "Leggi di più" : "Read more"}
                                       </button>
                                     )}
-                                    <div
-                                      className={`mt-3 text-lg font-bold ${
-                                        menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
-                                      }`}
-                                    >
-                                      {item.price ? `${item.price.toFixed(2)} €` : ""}
+                                    <div className="flex justify-between items-center">
+                                      <div
+                                        className={`mt-3 text-lg font-bold ${
+                                          menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
+                                        }`}
+                                      >
+                                        {item.price ? `${item.price.toFixed(2)} €` : ""}
+                                      </div>
+                                      <AddToCartButton item={{ ...item, _id: foodCategory._id }} />
                                     </div>
                                   </div>
                                 </motion.div>
@@ -553,12 +574,15 @@ export default function Menu() {
                                   {language === "it" ? "Leggi di più" : "Read more"}
                                 </button>
                               )}
-                              <div
-                                className={`mt-3 text-lg font-bold ${
-                                  menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
-                                }`}
-                              >
-                                {item.price ? `${item.price.toFixed(2)} €` : ""}
+                              <div className="flex justify-between items-center">
+                                <div
+                                  className={`mt-3 text-lg font-bold ${
+                                    menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
+                                  }`}
+                                >
+                                  {item.price ? `${item.price.toFixed(2)} €` : ""}
+                                </div>
+                                <AddToCartButton item={item} />
                               </div>
                             </div>
                           </motion.div>
@@ -647,7 +671,10 @@ export default function Menu() {
             className="mt-8 pt-8 border-t border-neutral-800 text-center text-neutral-400"
           >
             <p>
-              © {new Date().getFullYear()} Piscina le Terrazze. <Link className="underline" href="/policy">Privacy Policy</Link>
+              © {new Date().getFullYear()} Piscina le Terrazze.{" "}
+              <Link className="underline" href="/policy">
+                Privacy Policy
+              </Link>
             </p>
           </motion.div>
         </div>
