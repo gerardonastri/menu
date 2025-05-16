@@ -16,7 +16,7 @@ import {
   X,
   Settings,
   LogOut,
-  ConciergeBell
+  ConciergeBell,
 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 
@@ -155,13 +155,13 @@ export default function Sidebar() {
         </div>
         <div className="p-4 border-t">
           <div className="space-y-2">
-            <Link
+            {/* <Link
               href="/admin/orders"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100"
             >
               <ConciergeBell size={20} />
               <span>Ordini</span>
-            </Link>
+            </Link> */}
             <Link
               href="/admin/settings"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100"

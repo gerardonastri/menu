@@ -1,22 +1,23 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { Sun, Moon, Search, X } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import AddToCartButton from "@/components/AddToCartButton"
-import CartIcon from "@/components/CartIcon"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { Sun, Moon, Search, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import BookingButton from "./BookingButton";
+// import AddToCartButton from "@/components/AddToCartButton";
+// import CartIcon from "@/components/CartIcon";
 
 export default function Menu() {
-  const [menuType, setMenuType] = useState("giorno") // "giorno" o "sera"
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredItems, setFilteredItems] = useState([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [language, setLanguage] = useState("it") // "it" o "en"
-  const [menuData, setMenuData] = useState({ giorno: {}, sera: {} })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [menuType, setMenuType] = useState("giorno"); // "giorno" o "sera"
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [language, setLanguage] = useState("it"); // "it" o "en"
+  const [menuData, setMenuData] = useState({ giorno: {}, sera: {} });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Traduzioni
   const translations = {
@@ -62,7 +63,7 @@ export default function Menu() {
       carrelloVuoto: "Your cart is empty",
       vaiAlCarrello: "Go to cart",
     },
-  }
+  };
 
   // Traduzioni delle categorie
   const categoryTranslations = {
@@ -82,87 +83,89 @@ export default function Menu() {
       caffetteria: "Coffee Bar",
       food: "Food",
     },
-  }
+  };
 
-  const t = translations[language]
+  const t = translations[language];
 
   const contactInfo = {
     telefono: "+39 123 456 7890",
     email: "info@piscinaterrazze.it",
     indirizzo: "Via Panoramica, 123 - Ravello (SA)",
     orari: t.aperto,
-  }
+  };
 
   // Fetch dei dati dal database
   useEffect(() => {
     const fetchMenuData = async () => {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
       try {
-        const response = await fetch("/api/menu-items")
+        const response = await fetch("/api/menu-items");
         if (!response.ok) {
-          throw new Error("Errore nel caricamento dei dati")
+          throw new Error("Errore nel caricamento dei dati");
         }
 
-        const data = await response.json()
+        const data = await response.json();
 
         // Organizziamo i dati per tempo e categoria
-        const organizedData = { giorno: {}, sera: {} }
+        const organizedData = { giorno: {}, sera: {} };
 
         data.forEach((item) => {
           if (!organizedData[item.time][item.category]) {
-            organizedData[item.time][item.category] = []
+            organizedData[item.time][item.category] = [];
           }
 
           // Modifica aquí: crea un ID único para cada producto
-          organizedData[item.time][item.category] = item.items.map((menuItem, index) => ({
-            ...menuItem,
-            _id: `${item._id}_${index}`, // ID único combinando el ID de la categoría y el índice
-          }))
-        })
+          organizedData[item.time][item.category] = item.items.map(
+            (menuItem, index) => ({
+              ...menuItem,
+              _id: `${item._id}_${index}`, // ID único combinando el ID de la categoría y el índice
+            })
+          );
+        });
 
-        setMenuData(organizedData)
-        setLoading(false)
+        setMenuData(organizedData);
+        setLoading(false);
       } catch (err) {
-        console.error("Errore durante il fetch dei dati:", err)
-        setError(err.message)
-        setLoading(false)
+        console.error("Errore durante il fetch dei dati:", err);
+        setError(err.message);
+        setLoading(false);
       }
-    }
+    };
 
-    fetchMenuData()
-  }, [])
+    fetchMenuData();
+  }, []);
 
   // Genera le categorie disponibili in base ai dati
   const getCategories = () => {
-    if (!menuData || !menuData[menuType]) return []
+    if (!menuData || !menuData[menuType]) return [];
 
     return Object.keys(menuData[menuType]).map((categoryId) => ({
       id: categoryId,
       name: categoryTranslations[language][categoryId] || categoryId,
-    }))
-  }
+    }));
+  };
 
   const categories = {
     giorno: getCategories(),
     sera: getCategories(),
-  }
+  };
 
   const toggleMenuType = () => {
-    setMenuType(menuType === "giorno" ? "sera" : "giorno")
-    setSearchTerm("")
-    setIsSearching(false)
-  }
+    setMenuType(menuType === "giorno" ? "sera" : "giorno");
+    setSearchTerm("");
+    setIsSearching(false);
+  };
 
   const toggleLanguage = () => {
-    setLanguage(language === "it" ? "en" : "it")
-  }
+    setLanguage(language === "it" ? "en" : "it");
+  };
 
   // Funzione per ottenere tutti gli elementi del menu corrente
   const getAllMenuItems = () => {
-    const items = []
+    const items = [];
 
-    if (!menuData || !menuData[menuType]) return items
+    if (!menuData || !menuData[menuType]) return items;
 
     // Aggiungi elementi standard
     Object.keys(menuData[menuType]).forEach((categoryId) => {
@@ -171,10 +174,10 @@ export default function Menu() {
           items.push({
             ...item,
             category: categoryId,
-          })
-        })
+          });
+        });
       }
-    })
+    });
 
     // Aggiungi elementi food con sottocategorie
     if (menuData[menuType].food) {
@@ -185,36 +188,37 @@ export default function Menu() {
               ...item,
               category: "food",
               subcategory: foodCategory.name,
-            })
-          })
+            });
+          });
         }
-      })
+      });
     }
 
-    return items
-  }
+    return items;
+  };
 
   // Effetto per filtrare gli elementi in base al termine di ricerca
   useEffect(() => {
     if (searchTerm.trim() === "") {
-      setFilteredItems([])
-      setIsSearching(false)
-      return
+      setFilteredItems([]);
+      setIsSearching(false);
+      return;
     }
 
-    setIsSearching(true)
-    const allItems = getAllMenuItems()
+    setIsSearching(true);
+    const allItems = getAllMenuItems();
 
     const filtered = allItems.filter((item) => {
-      const searchLower = searchTerm.toLowerCase()
+      const searchLower = searchTerm.toLowerCase();
       return (
         item.name.toLowerCase().includes(searchLower) ||
-        (item.description && item.description.toLowerCase().includes(searchLower))
-      )
-    })
+        (item.description &&
+          item.description.toLowerCase().includes(searchLower))
+      );
+    });
 
-    setFilteredItems(filtered)
-  }, [searchTerm, menuType, language, menuData])
+    setFilteredItems(filtered);
+  }, [searchTerm, menuType, language, menuData]);
 
   // Varianti per le animazioni
   const containerVariants = {
@@ -225,12 +229,12 @@ export default function Menu() {
         staggerChildren: 0.05,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
-  }
+  };
 
   if (loading) {
     return (
@@ -240,7 +244,7 @@ export default function Menu() {
           <p className="text-lg text-neutral-600">{t.caricamento}</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -252,7 +256,7 @@ export default function Menu() {
           <p className="text-neutral-600">{error}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -273,9 +277,13 @@ export default function Menu() {
             transition={{ duration: 0.8 }}
             className="text-center text-white p-6"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-2">Piscina le Terrazze</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-2">
+              Piscina le Terrazze
+            </h1>
             <p className="text-lg md:text-xl opacity-90">
-              {language === "it" ? "Un'esperienza unica con vista sul mare" : "A unique experience with sea view"}
+              {language === "it"
+                ? "Un'esperienza unica con vista sul mare"
+                : "A unique experience with sea view"}
             </p>
           </motion.div>
         </div>
@@ -289,14 +297,16 @@ export default function Menu() {
 
             <div className="flex items-center space-x-2 md:space-x-4">
               {/* Icona del carrello */}
-              <CartIcon />
+              {/* <CartIcon /> */}
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleLanguage}
                 className="p-2 md:px-4 md:py-2 rounded-full flex items-center gap-1 md:gap-2 text-neutral-700 hover:bg-neutral-200"
-                aria-label={language === "it" ? "Switch to English" : "Passa all'italiano"}
+                aria-label={
+                  language === "it" ? "Switch to English" : "Passa all'italiano"
+                }
               >
                 <Image
                   width={30}
@@ -306,15 +316,22 @@ export default function Menu() {
                 />
                 <span className="hidden md:inline">{t.cambiaLingua}</span>
               </motion.button>
+              <BookingButton />
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleMenuType}
                 className={`p-2 md:px-4 md:py-2 rounded-full flex items-center gap-1 md:gap-2 ${
-                  menuType === "giorno" ? "bg-indigo-900 text-white" : "bg-amber-500 text-white"
+                  menuType === "giorno"
+                    ? "bg-indigo-900 text-white"
+                    : "bg-amber-500 text-white"
                 }`}
-                aria-label={menuType === "giorno" ? "Visualizza menu serale" : "Visualizza menu giorno"}
+                aria-label={
+                  menuType === "giorno"
+                    ? "Visualizza menu serale"
+                    : "Visualizza menu giorno"
+                }
               >
                 {menuType === "giorno" ? (
                   <>
@@ -348,7 +365,9 @@ export default function Menu() {
             )}
           </div>
           <div>
-            <span className="text-neutral-500">{language === "it" ? "🇮🇹 Italiano" : "🇬🇧 English"}</span>
+            <span className="text-neutral-500">
+              {language === "it" ? "🇮🇹 Italiano" : "🇬🇧 English"}
+            </span>
           </div>
         </div>
       </div>
@@ -364,9 +383,15 @@ export default function Menu() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-10 py-2.5 bg-neutral-100 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 text-neutral-800"
             />
-            <Search className="absolute left-3 top-3 text-neutral-400" size={18} />
+            <Search
+              className="absolute left-3 top-3 text-neutral-400"
+              size={18}
+            />
             {searchTerm && (
-              <button onClick={() => setSearchTerm("")} className="absolute right-3 top-3 text-neutral-400">
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-3 text-neutral-400"
+              >
                 <X size={18} />
               </button>
             )}
@@ -380,10 +405,16 @@ export default function Menu() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className={`py-6 ${menuType === "giorno" ? "bg-amber-50" : "bg-indigo-50"}`}
+          className={`py-6 ${
+            menuType === "giorno" ? "bg-amber-50" : "bg-indigo-50"
+          }`}
         >
           <div className="max-w-6xl mx-auto px-4">
-            <h2 className={`text-2xl font-bold ${menuType === "giorno" ? "text-amber-600" : "text-indigo-800"}`}>
+            <h2
+              className={`text-2xl font-bold ${
+                menuType === "giorno" ? "text-amber-600" : "text-indigo-800"
+              }`}
+            >
               {menuType === "giorno" ? t.menuGiorno : t.menuSerale}
             </h2>
           </div>
@@ -396,7 +427,12 @@ export default function Menu() {
           <div>
             <h2 className="text-2xl font-bold mb-6">{t.risultatiRicerca}</h2>
             {filteredItems.length > 0 ? (
-              <motion.div className="grid gap-4" variants={containerVariants} initial="hidden" animate="visible">
+              <motion.div
+                className="grid gap-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 {filteredItems.map((item, index) => (
                   <motion.div
                     key={index}
@@ -405,39 +441,53 @@ export default function Menu() {
                   >
                     <div>
                       <h4 className="text-lg font-semibold">{item.name}</h4>
-                      {item.subcategory && <p className="text-sm text-amber-600 font-medium">{item.subcategory}</p>}
+                      {item.subcategory && (
+                        <p className="text-sm text-amber-600 font-medium">
+                          {item.subcategory}
+                        </p>
+                      )}
                       <div className="mt-2 space-y-1 text-sm">
                         {item.provenienza && (
                           <p className="text-neutral-600">
-                            <span className="font-medium">Provenienza:</span> {item.provenienza}
+                            <span className="font-medium">Provenienza:</span>{" "}
+                            {item.provenienza}
                           </p>
                         )}
                         {item.tipologia && (
                           <p className="text-neutral-600">
-                            <span className="font-medium">Tipologia:</span> {item.tipologia}
+                            <span className="font-medium">Tipologia:</span>{" "}
+                            {item.tipologia}
                           </p>
                         )}
                         {item.gradazione && (
                           <p className="text-neutral-600">
-                            <span className="font-medium">Gradazione:</span> {item.gradazione}
+                            <span className="font-medium">Gradazione:</span>{" "}
+                            {item.gradazione}
                           </p>
                         )}
                         {item.colore && (
                           <p className="text-neutral-600">
-                            <span className="font-medium">Colore:</span> {item.colore}
+                            <span className="font-medium">Colore:</span>{" "}
+                            {item.colore}
                           </p>
                         )}
                         {item.aroma && (
                           <p className="text-neutral-600">
-                            <span className="font-medium">Aroma:</span> {item.aroma}
+                            <span className="font-medium">Aroma:</span>{" "}
+                            {item.aroma}
                           </p>
                         )}
                         {item.metodo && (
                           <p className="text-neutral-600">
-                            <span className="font-medium">Metodo di produzione:</span> {item.metodo}
+                            <span className="font-medium">
+                              Metodo di produzione:
+                            </span>{" "}
+                            {item.metodo}
                           </p>
                         )}
-                        {item.description && <p className="text-neutral-600">{item.description}</p>}
+                        {item.description && (
+                          <p className="text-neutral-600">{item.description}</p>
+                        )}
                       </div>
                       {item.description && item.description.length > 50 && (
                         <button className="text-blue-500 text-sm mt-2 hover:underline">
@@ -447,12 +497,14 @@ export default function Menu() {
                       <div className="flex justify-between items-center">
                         <div
                           className={`mt-3 text-lg font-bold ${
-                            menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
+                            menuType === "giorno"
+                              ? "text-amber-600"
+                              : "text-indigo-600"
                           }`}
                         >
                           {item.price ? `${item.price.toFixed(2)} €` : ""}
                         </div>
-                        <AddToCartButton item={item} />
+                        {/* <AddToCartButton item={item} /> */}
                       </div>
                     </div>
                   </motion.div>
@@ -477,56 +529,89 @@ export default function Menu() {
               className="grid gap-12"
             >
               {categories[menuType].map((category) => (
-                <section key={category.id} className="scroll-mt-20" id={category.id}>
-                  <h3 className="text-xl font-bold mb-6 pb-2 border-b border-neutral-200">{category.name}</h3>
+                <section
+                  key={category.id}
+                  className="scroll-mt-20"
+                  id={category.id}
+                >
+                  <h3 className="text-xl font-bold mb-6 pb-2 border-b border-neutral-200">
+                    {category.name}
+                  </h3>
 
                   {category.id === "food" ? (
                     <div className="space-y-10">
-                      {menuData[menuType][category.id].map((foodCategory, index) => (
-                        <div key={index}>
-                          <h4 className="text-lg font-semibold mb-4">{foodCategory.name}</h4>
-                          <motion.div
-                            className="grid gap-4"
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                          >
-                            {foodCategory.items &&
-                              foodCategory.items.map((item, itemIndex) => (
-                                <motion.div
-                                  key={itemIndex}
-                                  variants={itemVariants}
-                                  className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100"
-                                >
-                                  <div>
-                                    <h5 className="text-lg font-semibold">{item.name}</h5>
-                                    <div className="mt-2 space-y-1 text-sm">
-                                      {item.description && <p className="text-neutral-600">{item.description}</p>}
-                                    </div>
-                                    {item.description && item.description.length > 50 && (
-                                      <button className="text-blue-500 text-sm mt-2 hover:underline">
-                                        {language === "it" ? "Leggi di più" : "Read more"}
-                                      </button>
-                                    )}
-                                    <div className="flex justify-between items-center">
-                                      <div
-                                        className={`mt-3 text-lg font-bold ${
-                                          menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
-                                        }`}
-                                      >
-                                        {item.price ? `${item.price.toFixed(2)} €` : ""}
+                      {menuData[menuType][category.id].map(
+                        (foodCategory, index) => (
+                          <div key={index}>
+                            <h4 className="text-lg font-semibold mb-4">
+                              {foodCategory.name}
+                            </h4>
+                            <motion.div
+                              className="grid gap-4"
+                              variants={containerVariants}
+                              initial="hidden"
+                              animate="visible"
+                            >
+                              {foodCategory.items &&
+                                foodCategory.items.map((item, itemIndex) => (
+                                  <motion.div
+                                    key={itemIndex}
+                                    variants={itemVariants}
+                                    className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100"
+                                  >
+                                    <div>
+                                      <h5 className="text-lg font-semibold">
+                                        {item.name}
+                                      </h5>
+                                      <div className="mt-2 space-y-1 text-sm">
+                                        {item.description && (
+                                          <p className="text-neutral-600">
+                                            {item.description}
+                                          </p>
+                                        )}
                                       </div>
-                                      <AddToCartButton item={{ ...item, _id: foodCategory._id }} />
+                                      {item.description &&
+                                        item.description.length > 50 && (
+                                          <button className="text-blue-500 text-sm mt-2 hover:underline">
+                                            {language === "it"
+                                              ? "Leggi di più"
+                                              : "Read more"}
+                                          </button>
+                                        )}
+                                      <div className="flex justify-between items-center">
+                                        <div
+                                          className={`mt-3 text-lg font-bold ${
+                                            menuType === "giorno"
+                                              ? "text-amber-600"
+                                              : "text-indigo-600"
+                                          }`}
+                                        >
+                                          {item.price
+                                            ? `${item.price.toFixed(2)} €`
+                                            : ""}
+                                        </div>
+                                        {/* <AddToCartButton
+                                          item={{
+                                            ...item,
+                                            _id: foodCategory._id,
+                                          }}
+                                        /> */}
+                                      </div>
                                     </div>
-                                  </div>
-                                </motion.div>
-                              ))}
-                          </motion.div>
-                        </div>
-                      ))}
+                                  </motion.div>
+                                ))}
+                            </motion.div>
+                          </div>
+                        )
+                      )}
                     </div>
                   ) : (
-                    <motion.div className="grid gap-4" variants={containerVariants} initial="hidden" animate="visible">
+                    <motion.div
+                      className="grid gap-4"
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                    >
                       {menuData[menuType][category.id] &&
                         menuData[menuType][category.id].map((item, index) => (
                           <motion.div
@@ -535,54 +620,81 @@ export default function Menu() {
                             className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100"
                           >
                             <div>
-                              <h4 className="text-lg font-semibold">{item.name}</h4>
+                              <h4 className="text-lg font-semibold">
+                                {item.name}
+                              </h4>
                               <div className="mt-2 space-y-1 text-sm">
                                 {item.provenienza && (
                                   <p className="text-neutral-600">
-                                    <span className="font-medium">Provenienza:</span> {item.provenienza}
+                                    <span className="font-medium">
+                                      Provenienza:
+                                    </span>{" "}
+                                    {item.provenienza}
                                   </p>
                                 )}
                                 {item.tipologia && (
                                   <p className="text-neutral-600">
-                                    <span className="font-medium">Tipologia:</span> {item.tipologia}
+                                    <span className="font-medium">
+                                      Tipologia:
+                                    </span>{" "}
+                                    {item.tipologia}
                                   </p>
                                 )}
                                 {item.gradazione && (
                                   <p className="text-neutral-600">
-                                    <span className="font-medium">Gradazione:</span> {item.gradazione}
+                                    <span className="font-medium">
+                                      Gradazione:
+                                    </span>{" "}
+                                    {item.gradazione}
                                   </p>
                                 )}
                                 {item.colore && (
                                   <p className="text-neutral-600">
-                                    <span className="font-medium">Colore:</span> {item.colore}
+                                    <span className="font-medium">Colore:</span>{" "}
+                                    {item.colore}
                                   </p>
                                 )}
                                 {item.aroma && (
                                   <p className="text-neutral-600">
-                                    <span className="font-medium">Aroma:</span> {item.aroma}
+                                    <span className="font-medium">Aroma:</span>{" "}
+                                    {item.aroma}
                                   </p>
                                 )}
                                 {item.metodo && (
                                   <p className="text-neutral-600">
-                                    <span className="font-medium">Metodo di produzione:</span> {item.metodo}
+                                    <span className="font-medium">
+                                      Metodo di produzione:
+                                    </span>{" "}
+                                    {item.metodo}
                                   </p>
                                 )}
-                                {item.description && <p className="text-neutral-600">{item.description}</p>}
+                                {item.description && (
+                                  <p className="text-neutral-600">
+                                    {item.description}
+                                  </p>
+                                )}
                               </div>
-                              {item.description && item.description.length > 50 && (
-                                <button className="text-blue-500 text-sm mt-2 hover:underline">
-                                  {language === "it" ? "Leggi di più" : "Read more"}
-                                </button>
-                              )}
+                              {item.description &&
+                                item.description.length > 50 && (
+                                  <button className="text-blue-500 text-sm mt-2 hover:underline">
+                                    {language === "it"
+                                      ? "Leggi di più"
+                                      : "Read more"}
+                                  </button>
+                                )}
                               <div className="flex justify-between items-center">
                                 <div
                                   className={`mt-3 text-lg font-bold ${
-                                    menuType === "giorno" ? "text-amber-600" : "text-indigo-600"
+                                    menuType === "giorno"
+                                      ? "text-amber-600"
+                                      : "text-indigo-600"
                                   }`}
                                 >
-                                  {item.price ? `${item.price.toFixed(2)} €` : ""}
+                                  {item.price
+                                    ? `${item.price.toFixed(2)} €`
+                                    : ""}
                                 </div>
-                                <AddToCartButton item={item} />
+                                {/* <AddToCartButton item={item} /> */}
                               </div>
                             </div>
                           </motion.div>
@@ -635,16 +747,20 @@ export default function Menu() {
               <h3 className="text-xl font-bold mb-4">{t.contatti}</h3>
               <div className="space-y-2 text-neutral-300">
                 <p>
-                  <span className="text-neutral-500">{t.indirizzo}:</span> {contactInfo.indirizzo}
+                  <span className="text-neutral-500">{t.indirizzo}:</span>{" "}
+                  {contactInfo.indirizzo}
                 </p>
                 <p>
-                  <span className="text-neutral-500">{t.telefono}:</span> {contactInfo.telefono}
+                  <span className="text-neutral-500">{t.telefono}:</span>{" "}
+                  {contactInfo.telefono}
                 </p>
                 <p>
-                  <span className="text-neutral-500">{t.email}:</span> {contactInfo.email}
+                  <span className="text-neutral-500">{t.email}:</span>{" "}
+                  {contactInfo.email}
                 </p>
                 <p>
-                  <span className="text-neutral-500">{t.orari}:</span> {contactInfo.orari}
+                  <span className="text-neutral-500">{t.orari}:</span>{" "}
+                  {contactInfo.orari}
                 </p>
               </div>
             </motion.div>
@@ -680,5 +796,5 @@ export default function Menu() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
