@@ -34,7 +34,7 @@ export default function Menu() {
       email: "Email",
       location: "La nostra location",
       diritti: "Tutti i diritti riservati",
-      aperto: "Aperto tutti i giorni dalle 10:00 alle 24:00",
+      aperto: "Aperto tutti i giorni dalle 09:00 alle 18:00",
       cambiaLingua: "English",
       caricamento: "Caricamento menu...",
       errore: "Si è verificato un errore nel caricamento del menu",
@@ -55,7 +55,7 @@ export default function Menu() {
       email: "Email",
       location: "Our location",
       diritti: "All rights reserved",
-      aperto: "Open daily from 10:00 AM to 12:00 AM",
+      aperto: "Open daily from 09:00 AM to 18:00 AM",
       cambiaLingua: "Italiano",
       caricamento: "Loading menu...",
       errore: "An error occurred while loading the menu",
@@ -88,8 +88,8 @@ export default function Menu() {
   const t = translations[language];
 
   const contactInfo = {
-    telefono: "+39 123 456 7890",
-    email: "info@piscinaterrazze.it",
+    telefono: "+393667280836",
+    email: "Via della Repubblica n.9",
     indirizzo: "Via Panoramica, 123 - Ravello (SA)",
     orari: t.aperto,
   };
