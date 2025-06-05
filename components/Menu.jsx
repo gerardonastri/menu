@@ -352,7 +352,7 @@ export default function Menu() {
                 />
                 <span className="hidden md:inline">{t.cambiaLingua}</span>
               </motion.button>
-              {/* <BookingButton /> */}
+              <BookingButton />
             </div>
           </div>
         </div>
