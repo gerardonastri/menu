@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, X, Globe } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import BookingButton from "./BookingButton";
@@ -34,9 +34,6 @@ export default function Menu() {
       cambiaLingua: "English",
       caricamento: "Caricamento menu...",
       errore: "Si è verificato un errore nel caricamento del menu",
-      aggiungiAlCarrello: "Aggiungi al carrello",
-      carrelloVuoto: "Il tuo carrello è vuoto",
-      vaiAlCarrello: "Vai al carrello",
     },
     en: {
       menu: "Our Menu",
@@ -54,9 +51,6 @@ export default function Menu() {
       cambiaLingua: "Italiano",
       caricamento: "Loading menu...",
       errore: "An error occurred while loading the menu",
-      aggiungiAlCarrello: "Add to cart",
-      carrelloVuoto: "Your cart is empty",
-      vaiAlCarrello: "Go to cart",
     },
   };
 
@@ -69,6 +63,8 @@ export default function Menu() {
       bibite: "Bibite",
       caffetteria: "Caffetteria",
       food: "Food",
+      drink: "Drink",
+      altro: "Altro",
     },
     en: {
       cocktail: "Cocktails",
@@ -77,6 +73,8 @@ export default function Menu() {
       bibite: "Soft Drinks",
       caffetteria: "Coffee Bar",
       food: "Food",
+      drink: "Drinks",
+      altro: "Other",
     },
   };
 
@@ -184,14 +182,30 @@ export default function Menu() {
     fetchMenuData();
   }, []);
 
-  // Genera le categorie disponibili in base ai dati
+  // Ordine personalizzato delle categorie
+  const categoryOrder = [
+    "bibite", // Drink
+    "birre", // Drink
+    "food", // Food
+    "caffetteria", // Caffetteria
+    "cocktail", // Cocktail
+    "altro", // Altro
+    "vino-e-spumanti", // Vino e spumanti (disponibile a breve)
+  ];
+
+  // Genera le categorie disponibili in base ai dati e all'ordine personalizzato
   const getCategories = () => {
     if (!menuData) return [];
 
-    return Object.keys(menuData).map((categoryId) => ({
-      id: categoryId,
-      name: categoryTranslations[language][categoryId] || categoryId,
-    }));
+    // Filtra le categorie esistenti e ordina secondo l'ordine personalizzato
+    const availableCategories = Object.keys(menuData);
+
+    return categoryOrder
+      .filter((categoryId) => availableCategories.includes(categoryId))
+      .map((categoryId) => ({
+        id: categoryId,
+        name: categoryTranslations[language][categoryId] || categoryId,
+      }));
   };
 
   const categories = getCategories();
@@ -476,11 +490,6 @@ export default function Menu() {
                           <p className="text-neutral-600">{item.description}</p>
                         )}
                       </div>
-                      {item.description && item.description.length > 50 && (
-                        <button className="text-blue-500 text-sm mt-2 hover:underline">
-                          {language === "it" ? "Leggi di più" : "Read more"}
-                        </button>
-                      )}
                       <div className="flex justify-between items-center">
                         <div className="mt-3 text-lg font-bold text-amber-600">
                           {item.price ? `${item.price.toFixed(2)} €` : ""}
@@ -512,7 +521,7 @@ export default function Menu() {
                 id={category.id}
               >
                 <h3 className="text-xl font-bold mb-6 pb-2 border-b border-neutral-200">
-                  {category.name}
+                  <span>{category.name}</span>
                 </h3>
 
                 {category.id === "food" ? (
@@ -549,14 +558,6 @@ export default function Menu() {
                                           </p>
                                         )}
                                       </div>
-                                      {item.description &&
-                                        item.description.length > 50 && (
-                                          <button className="text-blue-500 text-sm mt-2 hover:underline">
-                                            {language === "it"
-                                              ? "Leggi di più"
-                                              : "Read more"}
-                                          </button>
-                                        )}
                                       <div className="flex justify-between items-center">
                                         <div className="mt-3 text-lg font-bold text-amber-600">
                                           {item.price
@@ -640,14 +641,6 @@ export default function Menu() {
                                 </p>
                               )}
                             </div>
-                            {item.description &&
-                              item.description.length > 50 && (
-                                <button className="text-blue-500 text-sm mt-2 hover:underline">
-                                  {language === "it"
-                                    ? "Leggi di più"
-                                    : "Read more"}
-                                </button>
-                              )}
                             <div className="flex justify-between items-center">
                               <div className="mt-3 text-lg font-bold text-amber-600">
                                 {item.price ? `${item.price.toFixed(2)} €` : ""}
