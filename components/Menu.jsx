@@ -6,6 +6,8 @@ import { Search, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import BookingButton from "./BookingButton";
+import MenuItemDisplay from "./menu-item-display";
+import { translateMenuItem } from "./menu-translations";
 
 export default function Menu() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +18,7 @@ export default function Menu() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Traduzioni
+  // Traduzioni (mantieni le traduzioni esistenti)
   const translations = {
     it: {
       menu: "Il Nostro Menu",
@@ -87,7 +89,7 @@ export default function Menu() {
     orari: t.aperto,
   };
 
-  // Fetch dei dati dal database - modificato per unificare giorno e sera senza duplicati
+  // Fetch dei dati dal database (mantieni la logica esistente)
   useEffect(() => {
     const fetchMenuData = async () => {
       setLoading(true);
@@ -99,11 +101,7 @@ export default function Menu() {
         }
 
         const data = await response.json();
-
-        // Organizziamo i dati solo per categoria, unificando giorno e sera
         const organizedData = {};
-
-        // Mappa per tenere traccia degli elementi già aggiunti (per evitare duplicati)
         const itemTracker = {};
 
         data.forEach((item) => {
@@ -112,32 +110,25 @@ export default function Menu() {
             itemTracker[item.category] = {};
           }
 
-          // Processa gli elementi normali
           item.items.forEach((menuItem, index) => {
-            // Crea un ID univoco per l'elemento
             const uniqueId = `${item._id}_${index}`;
-
-            // Usa il nome come chiave per identificare duplicati
             const itemKey = menuItem.name.toLowerCase().trim();
 
             if (!itemTracker[item.category][itemKey]) {
-              // Se l'elemento non esiste ancora, aggiungilo
               const newItem = {
                 ...menuItem,
                 _id: uniqueId,
-                availability: [item.time], // Tieni traccia della disponibilità
+                availability: [item.time],
               };
 
               organizedData[item.category].push(newItem);
               itemTracker[item.category][itemKey] = newItem;
             } else {
-              // Se l'elemento esiste già, aggiorna la disponibilità
               const existingItem = itemTracker[item.category][itemKey];
               if (!existingItem.availability.includes(item.time)) {
                 existingItem.availability.push(item.time);
               }
 
-              // Mantieni il prezzo più recente o più alto se diverso
               if (
                 menuItem.price &&
                 (!existingItem.price || menuItem.price > existingItem.price)
@@ -145,7 +136,6 @@ export default function Menu() {
                 existingItem.price = menuItem.price;
               }
 
-              // Mantieni la descrizione più completa
               if (
                 menuItem.description &&
                 (!existingItem.description ||
@@ -153,7 +143,6 @@ export default function Menu() {
               ) {
                 existingItem.description = menuItem.description;
               }
-              // Mantieni altri dettagli se disponibili
               [
                 "provenienza",
                 "tipologia",
@@ -184,20 +173,19 @@ export default function Menu() {
 
   // Ordine personalizzato delle categorie
   const categoryOrder = [
-    "bibite", // Drink
-    "birre", // Drink
-    "food", // Food
-    "caffetteria", // Caffetteria
-    "cocktail", // Cocktail
-    "altro", // Altro
-    "vino-e-spumanti", // Vino e spumanti (disponibile a breve)
+    "bibite",
+    "birre",
+    "food",
+    "caffetteria",
+    "cocktail",
+    "altro",
+    "vino-e-spumanti",
   ];
 
-  // Genera le categorie disponibili in base ai dati e all'ordine personalizzato
+  // Genera le categorie disponibili
   const getCategories = () => {
     if (!menuData) return [];
 
-    // Filtra le categorie esistenti e ordina secondo l'ordine personalizzato
     const availableCategories = Object.keys(menuData);
 
     return categoryOrder
@@ -214,18 +202,20 @@ export default function Menu() {
     setLanguage(language === "it" ? "en" : "it");
   };
 
-  // Funzione per ottenere tutti gli elementi del menu
+  // Funzione per ottenere tutti gli elementi del menu (con traduzione)
   const getAllMenuItems = () => {
     const items = [];
 
     if (!menuData) return items;
 
-    // Aggiungi elementi standard
     Object.keys(menuData).forEach((categoryId) => {
       if (categoryId !== "food") {
         menuData[categoryId].forEach((item) => {
+          // Traduci l'elemento prima di aggiungerlo alla lista
+          const translatedItem = translateMenuItem(item, language);
           items.push({
-            ...item,
+            ...translatedItem,
+            originalItem: item, // Mantieni l'elemento originale per riferimento
             category: categoryId,
           });
         });
@@ -237,8 +227,10 @@ export default function Menu() {
       menuData.food.forEach((foodCategory) => {
         if (foodCategory.items) {
           foodCategory.items.forEach((item) => {
+            const translatedItem = translateMenuItem(item, language);
             items.push({
-              ...item,
+              ...translatedItem,
+              originalItem: item,
               category: "food",
               subcategory: foodCategory.name,
             });
@@ -435,67 +427,12 @@ export default function Menu() {
                 animate="visible"
               >
                 {filteredItems.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    variants={itemVariants}
-                    className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100"
-                  >
-                    <div>
-                      <h4 className="text-lg font-semibold">{item.name}</h4>
-                      {item.subcategory && (
-                        <p className="text-sm text-amber-600 font-medium">
-                          {item.subcategory}
-                        </p>
-                      )}
-                      <div className="mt-2 space-y-1 text-sm">
-                        {item.provenienza && (
-                          <p className="text-neutral-600">
-                            <span className="font-medium">Provenienza:</span>{" "}
-                            {item.provenienza}
-                          </p>
-                        )}
-                        {item.tipologia && (
-                          <p className="text-neutral-600">
-                            <span className="font-medium">Tipologia:</span>{" "}
-                            {item.tipologia}
-                          </p>
-                        )}
-                        {item.gradazione && (
-                          <p className="text-neutral-600">
-                            <span className="font-medium">Gradazione:</span>{" "}
-                            {item.gradazione}
-                          </p>
-                        )}
-                        {item.colore && (
-                          <p className="text-neutral-600">
-                            <span className="font-medium">Colore:</span>{" "}
-                            {item.colore}
-                          </p>
-                        )}
-                        {item.aroma && (
-                          <p className="text-neutral-600">
-                            <span className="font-medium">Aroma:</span>{" "}
-                            {item.aroma}
-                          </p>
-                        )}
-                        {item.metodo && (
-                          <p className="text-neutral-600">
-                            <span className="font-medium">
-                              Metodo di produzione:
-                            </span>{" "}
-                            {item.metodo}
-                          </p>
-                        )}
-                        {item.description && (
-                          <p className="text-neutral-600">{item.description}</p>
-                        )}
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div className="mt-3 text-lg font-bold text-amber-600">
-                          {item.price ? `${item.price.toFixed(2)} €` : ""}
-                        </div>
-                      </div>
-                    </div>
+                  <motion.div key={index} variants={itemVariants}>
+                    <MenuItemDisplay
+                      item={item.originalItem || item}
+                      language={language}
+                      category={item.category}
+                    />
                   </motion.div>
                 ))}
               </motion.div>
@@ -528,7 +465,7 @@ export default function Menu() {
                   <div className="space-y-10">
                     {menuData[category.id] &&
                       menuData[category.id]
-                        .filter((item) => item.items) // Solo elementi con sottocategorie
+                        .filter((item) => item.items)
                         .map((foodCategory, index) => (
                           <div key={index}>
                             <h4 className="text-lg font-semibold mb-4">
@@ -545,27 +482,12 @@ export default function Menu() {
                                   <motion.div
                                     key={itemIndex}
                                     variants={itemVariants}
-                                    className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100"
                                   >
-                                    <div>
-                                      <h5 className="text-lg font-semibold">
-                                        {item.name}
-                                      </h5>
-                                      <div className="mt-2 space-y-1 text-sm">
-                                        {item.description && (
-                                          <p className="text-neutral-600">
-                                            {item.description}
-                                          </p>
-                                        )}
-                                      </div>
-                                      <div className="flex justify-between items-center">
-                                        <div className="mt-3 text-lg font-bold text-amber-600">
-                                          {item.price
-                                            ? `${item.price.toFixed(2)} €`
-                                            : ""}
-                                        </div>
-                                      </div>
-                                    </div>
+                                    <MenuItemDisplay
+                                      item={item}
+                                      language={language}
+                                      category="food"
+                                    />
                                   </motion.div>
                                 ))}
                             </motion.div>
@@ -581,72 +503,12 @@ export default function Menu() {
                   >
                     {menuData[category.id] &&
                       menuData[category.id].map((item, index) => (
-                        <motion.div
-                          key={index}
-                          variants={itemVariants}
-                          className="bg-white rounded-lg p-4 shadow-sm border border-neutral-100"
-                        >
-                          <div>
-                            <h4 className="text-lg font-semibold">
-                              {item.name}
-                            </h4>
-                            <div className="mt-2 space-y-1 text-sm">
-                              {item.provenienza && (
-                                <p className="text-neutral-600">
-                                  <span className="font-medium">
-                                    Provenienza:
-                                  </span>{" "}
-                                  {item.provenienza}
-                                </p>
-                              )}
-                              {item.tipologia && (
-                                <p className="text-neutral-600">
-                                  <span className="font-medium">
-                                    Tipologia:
-                                  </span>{" "}
-                                  {item.tipologia}
-                                </p>
-                              )}
-                              {item.gradazione && (
-                                <p className="text-neutral-600">
-                                  <span className="font-medium">
-                                    Gradazione:
-                                  </span>{" "}
-                                  {item.gradazione}
-                                </p>
-                              )}
-                              {item.colore && (
-                                <p className="text-neutral-600">
-                                  <span className="font-medium">Colore:</span>{" "}
-                                  {item.colore}
-                                </p>
-                              )}
-                              {item.aroma && (
-                                <p className="text-neutral-600">
-                                  <span className="font-medium">Aroma:</span>{" "}
-                                  {item.aroma}
-                                </p>
-                              )}
-                              {item.metodo && (
-                                <p className="text-neutral-600">
-                                  <span className="font-medium">
-                                    Metodo di produzione:
-                                  </span>{" "}
-                                  {item.metodo}
-                                </p>
-                              )}
-                              {item.description && (
-                                <p className="text-neutral-600">
-                                  {item.description}
-                                </p>
-                              )}
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <div className="mt-3 text-lg font-bold text-amber-600">
-                                {item.price ? `${item.price.toFixed(2)} €` : ""}
-                              </div>
-                            </div>
-                          </div>
+                        <motion.div key={index} variants={itemVariants}>
+                          <MenuItemDisplay
+                            item={item}
+                            language={language}
+                            category={category.id}
+                          />
                         </motion.div>
                       ))}
                   </motion.div>
