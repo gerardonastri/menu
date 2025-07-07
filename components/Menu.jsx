@@ -599,6 +599,12 @@ export default function Menu() {
                 Privacy Policy
               </Link>
             </p>
+            <p className="mt-2">
+              Powered by{" "}
+              <Link href="https://www.gerardonastri.it" className="underline">
+                Gerardo Nastri
+              </Link>
+            </p>
           </motion.div>
         </div>
       </footer>
